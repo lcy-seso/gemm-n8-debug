@@ -90,5 +90,3 @@ extern "C" int call(half_t* __restrict__ A, half_t* __restrict__ B,
 
     return 0;
 }
-
-int main() { return 0; }
