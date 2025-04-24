@@ -308,15 +308,15 @@ class GemmTensorOp {
         typename std::conditional<std::is_same<B_type_raw, float>::value,
                                   tfloat32_t, A_type_raw>::type;
     using C_type = C_type_raw;
-    using Instruction =
-        DispatchInstruction<A_type, B_type, C_type, num_warp_m, num_warp_n>;
 
     using OperandATraits =
         OperandTraits<sizeof_bits<A_type>::value, M, K, !trans_A>;
     using OperandBTraits =
         OperandTraits<sizeof_bits<B_type>::value, N, K, trans_B>;
+
     using SmemLayoutA = typename OperandATraits::Layout;
     using SmemLayoutB = typename OperandBTraits::Layout;
+
     using SmemCopyA = Copy_Atom<typename OperandATraits::Copy, A_type>;
     using SmemCopyB = Copy_Atom<typename OperandBTraits::Copy, B_type>;
 
@@ -349,8 +349,10 @@ class GemmTensorOp {
                                 SmemLayoutB{});
         TileMma tiled_mma;
         auto thr_mma = tiled_mma.get_thread_slice(tid);
+
         auto tiled_copy_A = make_tiled_copy_A(SmemCopyA{}, tiled_mma);
         auto tiled_copy_B = make_tiled_copy_B(SmemCopyB{}, tiled_mma);
+
         auto thr_copy_A = tiled_copy_A.get_thread_slice(tid);
         auto thr_copy_B = tiled_copy_B.get_thread_slice(tid);
 
@@ -375,6 +377,7 @@ class GemmTensorOp {
             make_tensor(tCrA.data(), remove_swizzle(tCrA.layout()));
         auto tCrB_view =
             make_tensor(tCrB.data(), remove_swizzle(tCrB.layout()));
+
         CUTE_UNROLL
         for (int k = 0; k < size<2>(tCrA); ++k) {
             copy(tiled_copy_A, tCsA(_, _, k), tCrA_copy_view(_, _, k));
