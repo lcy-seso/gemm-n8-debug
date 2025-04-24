@@ -109,24 +109,24 @@ TL_DEVICE void AtomicAdd(T1* address, T2 val) {
 // }
 
 // AtomicAdd Functions for FP16
-template <>
-TL_DEVICE void AtomicAdd(half_t* address, half_t val) {
-    // Use atomicCAS with built-in cuda_fp16 support
-    atomicAdd(reinterpret_cast<half*>(address), static_cast<half>(val));
-}
+// template <>
+// TL_DEVICE void AtomicAdd(half_t* address, half_t val) {
+//     // Use atomicCAS with built-in cuda_fp16 support
+//     atomicAdd(reinterpret_cast<half*>(address), static_cast<half>(val));
+// }
 
-// AtomicAdd Functions for FP16
-template <>
-TL_DEVICE void AtomicAdd(half_t* address, half_t* val) {
-    atomicAdd(reinterpret_cast<half*>(address), static_cast<half>(*val));
-}
+// // AtomicAdd Functions for FP16
+// template <>
+// TL_DEVICE void AtomicAdd(half_t* address, half_t* val) {
+//     atomicAdd(reinterpret_cast<half*>(address), static_cast<half>(*val));
+// }
 
-// AtomicAdd Functions for FP16
-template <>
-TL_DEVICE void AtomicAdd(half_t* address, float val) {
-    // Use atomicCAS with built-in cuda_fp16 support
-    atomicAdd(reinterpret_cast<half*>(address), __float2half(val));
-}
+// // AtomicAdd Functions for FP16
+// template <>
+// TL_DEVICE void AtomicAdd(half_t* address, float val) {
+//     // Use atomicCAS with built-in cuda_fp16 support
+//     atomicAdd(reinterpret_cast<half*>(address), __float2half(val));
+// }
 
 // AtomicAdd Functions for BFLOAT16
 #if (defined(__CUDA_ARCH_LIST__) && (__CUDA_ARCH_LIST__ > 750))

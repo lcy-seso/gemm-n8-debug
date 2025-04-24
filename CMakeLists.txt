@@ -33,6 +33,7 @@ include(select_compute_arch)
 cuda_select_nvcc_arch_flags(ARCH_LIST Auto)
 list(APPEND CUDA_NVCC_FLAGS ${ARCH_LIST})
 
+include_directories("${PROJECT_SOURCE_DIR}/include")
 include_directories("${PROJECT_SOURCE_DIR}/cutlass/include")
 
 add_executable(gemm-n8 main.cu)
