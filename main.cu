@@ -1,9 +1,4 @@
-#include "tl_templates/cuda/copy.h"
-#include "tl_templates/cuda/debug.h"
-#include "tl_templates/cuda/gemm_sm89.h"
-#include "tl_templates/cuda/ldsm.h"
-#include "tl_templates/cuda/reduce.h"
-#include "tl_templates/cuda/threadblock_swizzle.h"
+#include "gemm_sm89.h"
 
 extern "C" __global__ void main_kernel(half_t* __restrict__ A,
                                        half_t* __restrict__ B,
@@ -57,8 +52,9 @@ extern "C" __global__ void __launch_bounds__(64, 1)
     }
     __syncthreads();
 
-    tl::gemm_ss<16, 16, 64, 1, 2, 0, 1, 0>((&(A_shared[0])), (&(B_shared[0])),
-                                           (&(C_local[0])));
+    tl::gemm_ss<16, 16, 64, 1, 2, 0, 1, 0, half_t, half_t, float>(
+        (&(A_shared[0])), (&(B_shared[0])), (&(C_local[0])));
+
 #pragma unroll
     for (int i_3 = 0; i_3 < 2; ++i_3) {
         uint1 __1;
