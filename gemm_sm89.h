@@ -156,6 +156,7 @@ struct DispatchInstruction<double, double, double, num_warp_m, num_warp_n> {
     using MMA = MMA_Atom<SM80_8x8x4_F64F64F64F64_TN>;
     using MMA_Group = Tile<Int<num_warp_m * 16>, Int<num_warp_n * 16>, _X>;
 };
+
 #elif (defined(__CUDA_ARCH_LIST__) && (__CUDA_ARCH_LIST__ >= 750))
 template <int num_warp_m, int num_warp_n>
 struct DispatchInstruction<half_t, half_t, float, num_warp_m, num_warp_n> {
@@ -320,8 +321,9 @@ class GemmTensorOp {
     using SmemCopyA = Copy_Atom<typename OperandATraits::Copy, A_type>;
     using SmemCopyB = Copy_Atom<typename OperandBTraits::Copy, B_type>;
 
+    // MMA_Atom<SM75_16x8x8_F32F16F16F32_TN>
     using TileMma =
-        TiledMMA<MMA_Atom<SM75_16x8x8_F32F16F16F32_TN>,
+        TiledMMA<MMA_Atom<SM80_16x8x16_F32F16F16F32_TN>,
                  Layout<Shape<Int<num_warp_m>, Int<num_warp_n>, _1>>,
                  Tile<_X, Int<num_warp_n * 16>, _16>>;
 
@@ -382,7 +384,8 @@ class GemmTensorOp {
         for (int k = 0; k < size<2>(tCrA); ++k) {
             copy(tiled_copy_A, tCsA(_, _, k), tCrA_copy_view(_, _, k));
             copy(tiled_copy_B, tCsB(_, _, k), tCrB_copy_view(_, _, k));
-            gemm(tiled_mma, tCrA_view(_, _, k), tCrB_view(_, _, k), acc);
+
+            // gemm(tiled_mma, tCrA_view(_, _, k), tCrB_view(_, _, k), acc);
         }
     }
 
